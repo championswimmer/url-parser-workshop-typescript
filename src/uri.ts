@@ -1,4 +1,5 @@
-import { parseScheme } from './uri-parsers';
+import { schemes } from './schemes';
+import { parseAuthority, parsePath, parseScheme } from './uri-parsers';
 
 export interface Authority {
   userInfo: string | undefined;
@@ -50,13 +51,29 @@ export class URI {
     // 2. If scheme.hasAuthority is true, parse authority
     //    If scheme.hasAuthority is false, error out if authority is present
     const schemeType = schemes[scheme]; // TODO if not present, have a default
-
+    let authority, uriWithoutAuthority
+    if (schemeType.hasAuthority) {
+      [authority, uriWithoutAuthority] = parseAuthority(uriWithoutScheme);
+    } else {
+      if (uriWithoutScheme.startsWith('//')) {
+        throw new Error('Invalid URI: this scheme should not have authority');
+      }
+      uriWithoutAuthority = uriWithoutScheme;
+    }
 
     // 3. Parse path
+    const [path, uriWithoutPath] = parsePath(uriWithoutAuthority);
 
     // 4. Parse query
+    // TODO: write query parser in uri-parsers.ts
+    const query = {};
 
     // 5. Parse fragment
+    // TODO: write fragment parser in uri-parsers.ts
+    const fragment = {};
+
+    // TODO: add a builder for URI 
+    return new URI(scheme, authority, path, query, fragment);
   }
 }
 

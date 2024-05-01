@@ -3,7 +3,7 @@ interface URIScheme {
   hasAuthority: boolean
 }
 
-const schemes: { [scheme: string]: URIScheme } = {
+export const schemes: { [scheme: string]: URIScheme } = {
   'http': { hasAuthority: true },
   'https': { hasAuthority: true },
   'file': { hasAuthority: false },

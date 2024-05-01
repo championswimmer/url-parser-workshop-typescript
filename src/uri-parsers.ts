@@ -43,3 +43,21 @@ export function parseAuthority(uriWithoutScheme: string): [Authority, string] {
   return [authority, rest];
 
 }
+
+export function parsePath(uriWithoutAuthority: string): [string, string] {
+  const indexOfQuestion = uriWithoutAuthority.indexOf('?');
+  const indexOfHash = uriWithoutAuthority.indexOf('#');
+
+  if (indexOfHash !== -1 && indexOfHash < indexOfQuestion) {
+    throw new Error("Invalid URI: fragment before query")
+  }
+
+  if (indexOfQuestion === -1) {
+    if (indexOfHash === -1) {
+      return [uriWithoutAuthority, ''];
+    }
+    return [uriWithoutAuthority.slice(0, indexOfHash), uriWithoutAuthority.slice(indexOfHash)];
+  } else {
+    return [uriWithoutAuthority.slice(0, indexOfQuestion), uriWithoutAuthority.slice(indexOfQuestion)];
+  }
+}

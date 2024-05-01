@@ -1,5 +1,5 @@
 import { expect } from 'chai';
-import { parseScheme, parseAuthority } from "../src/uri-parsers";
+import { parseScheme, parseAuthority, parsePath } from "../src/uri-parsers";
 
 describe("parseScheme", () => {
   it("should return the scheme and the rest of the URI (with authority)", () => {
@@ -69,3 +69,41 @@ describe("parseAuthority", () => {
     });
   });
 });
+
+describe("parsePath", () => {
+  describe("should return the path and the rest of the URI", () => {
+    it("path + query + fragment", () => {
+      const [path, rest] = parsePath("/path/to/resource?query=string#fragment");
+
+      expect(path).to.equal("/path/to/resource");
+      expect(rest).to.equal("?query=string#fragment");
+    })
+
+    it("path + query", () => {
+      const [path, rest] = parsePath("/path/to/resource?query=string");
+
+      expect(path).to.equal("/path/to/resource");
+      expect(rest).to.equal("?query=string");
+    })
+
+    it("path + fragment", () => {
+      const [path, rest] = parsePath("/path/to/resource#fragment");
+
+      expect(path).to.equal("/path/to/resource");
+      expect(rest).to.equal("#fragment");
+    })
+
+    it("path", () => {
+      const [path, rest] = parsePath("/path/to/resource");
+
+      expect(path).to.equal("/path/to/resource");
+      expect(rest).to.equal("");
+    })
+  });
+
+  describe("should fail for invalid query and fragment", () => {
+    it ("fragment before query", () => {
+      expect(() => parsePath("/path/to/resource#fragment?query=string")).to.throw("Invalid URI: fragment before query");
+    })
+  })
+})
