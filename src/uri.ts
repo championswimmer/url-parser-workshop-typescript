@@ -1,3 +1,4 @@
+import { parseScheme } from './uri-parsers';
 
 export interface Authority {
   userInfo: string | undefined;
@@ -44,9 +45,12 @@ export class URI {
 
   static parse(uri: string): URI {
     // 1. Parse and find out scheme 
+    const [scheme, uriWithoutScheme] = parseScheme(uri);
 
     // 2. If scheme.hasAuthority is true, parse authority
     //    If scheme.hasAuthority is false, error out if authority is present
+    const schemeType = schemes[scheme]; // TODO if not present, have a default
+
 
     // 3. Parse path
 
